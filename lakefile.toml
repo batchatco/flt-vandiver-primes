@@ -1,0 +1,22 @@
+name = "«flt-vandiver-primes»"
+defaultTargets = ["FltPrimes"]
+
+[leanOptions]
+pp.unicode.fun = true
+autoImplicit = false
+relaxedAutoImplicit = false
+maxSynthPendingDepth = 3
+# `native_decide` is the certificate mechanism of this development: every per-prime
+# fact is a compiler-trusted boolean evaluation behind a kernel-checked soundness
+# bridge. Mathlib bans `native_decide`
+# because its trust contract is kernel-only; this project's is deliberately not,
+# and the trust is disclosed per theorem via `#print axioms`. Hence disabled here.
+weak.linter.style.nativeDecide = false
+
+[[require]]
+name = "«flt-vandiver»"
+path = "../flt-vandiver"
+
+[[lean_lib]]
+name = "FltPrimes"
+globs = ["FltPrimes"]
