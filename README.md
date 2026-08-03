@@ -18,8 +18,9 @@ checked at `16843` in ~20 minutes — the two Wolstenholme primes share one
 Case I/II route and the same trust base (`2124679` reports 65 scoped
 `native_decide` axioms against `16843`'s 5), so rebuilding it confirms the
 method scales rather than testing anything new. The axiom audit itself
-(`lake env lean AxiomAudit2124679.lean`) only loads the prebuilt oleans and
-takes seconds — it is the multi-day *rebuild*, not the audit, that is expensive.
+(`lake env lean AxiomAudit2124679.lean`) is cheap once its oleans exist (after that
+build, or after restoring prebuilt oleans) — it is the multi-day *rebuild*, not the
+audit, that is expensive.
 
 A `native_decide`-free counterpart — pure kernel `decide`, no compiler trust —
 re-proves the **8 irregular primes `< 200`** in the sibling repo
@@ -31,7 +32,18 @@ which supplies the proof template (`CaseII95Descent`, `QiCertFast`, …). Each f
 uses the `FltVandiver` namespace, with inter-file imports pointing to
 `FltPrimes`.
 
-`lake build FltPrimes` builds (and re-runs every certificate for) all primes.
+## Build
+
+```bash
+lake exe cache get      # Mathlib cache
+lake build              # every prime 17 ≤ p < 1000, plus 16843
+```
+
+`2124679` is **not** in the default build — it is a multi-day, 64-core job; opt in with
+`lake build FltPrimes.FLT2124679`. The rest is light: sub-1000 primes are `native_decide`
+(~6 GiB, seconds-to-minutes), the `16843` slices ~4 GiB each (~20 min). The default runs in parallel, so
+if it oversubscribes RAM, build individual `FltPrimes.FLT<p>` targets and/or serialize under a cap
+(e.g. `systemd-run --scope -p MemoryMax=… env LEAN_NUM_THREADS=1 lake build`) — your call.
 
 Case I is discharged by Kummer's criterion (`p ∤ B_{p−3}`, via `irrListCertFast`) at the
 sub-1000 primes; at the two Wolstenholme primes `B_{p−3}` vanishes, so Case I instead uses a
