@@ -1,0 +1,55 @@
+\blueprintfrontmatter
+
+\begin{abstract}
+\code{flt-vandiver-primes} instantiates the engine of \code{flt-vandiver} with
+finite \code{native\_decide} certificates, yielding \code{FermatLastTheoremFor}~$p$
+for every prime $17 \le p < 1000$ and for both Wolstenholme primes $16843$ and
+$2124679$. The engine assembly theorems are external leaves.
+\end{abstract}
+
+\section{Certificate instances}
+
+\begin{definition}[Engine assembly (external)]\label{ext:engine}
+  \leanok
+  From \code{flt-vandiver}: \code{fermatLastTheoremFor\_of\_certs\_95} (Case~II via
+  the small witness, Case~I via the $B_{p-3}$ certificate) and its Germain variant.
+\end{definition}
+
+\begin{definition}[Fast per-prime assembly]\label{def:witnessfast}
+  \lean{FltVandiver.fltPrimeWitnessFast}
+  \leanok
+  \uses{ext:engine}
+  \code{fltPrimeWitnessFast}: a one-line template turning the \code{native\_decide}
+  $Q_i$ and irregularity certificates into \code{FermatLastTheoremFor}~$p$ at a
+  non-Wolstenholme prime.
+\end{definition}
+
+\begin{definition}[Germain per-prime assembly]\label{def:witnesssg}
+  \lean{FltVandiver.fltPrimeWitnessSGSub}
+  \leanok
+  \uses{ext:engine}
+  \code{fltPrimeWitnessSGSub}: the Wolstenholme variant, taking the $Q_i$ certificate
+  and a Sophie Germain subgroup certificate.
+\end{definition}
+
+\begin{theorem}[First irregular prime]\label{thm:flt37}
+  \lean{FltVandiver.fermatLastTheoremFor_37}
+  \leanok
+  \uses{def:witnessfast}
+  \code{FermatLastTheoremFor}~$37$. All $162$ primes $17 \le p < 1000$ follow this
+  template.
+\end{theorem}
+
+\begin{theorem}[Wolstenholme prime $16843$]\label{thm:flt16843}
+  \lean{FltVandiver.fermatLastTheoremFor_16843}
+  \leanok
+  \uses{def:witnesssg}
+  \code{FermatLastTheoremFor}~$16843$ ($4$ $Q_i$ slices $+$ one SG certificate).
+\end{theorem}
+
+\begin{theorem}[Wolstenholme prime $2124679$]\label{thm:flt2124679}
+  \lean{FltVandiver.fermatLastTheoremFor_2124679}
+  \leanok
+  \uses{def:witnesssg}
+  \code{FermatLastTheoremFor}~$2124679$ ($64$ $Q_i$ slices $+$ one SG certificate).
+\end{theorem}
