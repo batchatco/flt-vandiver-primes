@@ -1,11 +1,14 @@
 name: Build check (all primes except 2124679)
 
-# Compiles every per-prime module in FltPrimes/ EXCEPT the FLT2124679 slices.
-# The default `lake build` target (the FltPrimes aggregate) imports FLT2124679, whose
-# certificate is a ~8-day / 250-core-day build (time-bound, not memory) and cannot finish
-# on a CI runner. Everything else — the 162 primes below 1000 and the 16843 slices
-# (~6.6 GiB peak, well under the 16 GB runner) — builds cold in roughly an hour, giving a
-# genuine "this per-prime library compiles" signal. Pure build check: no docs, no deploy.
+# Compiles every per-prime module in FltPrimes/ EXCEPT the FLT2124679 slices (whose
+# ~8-day / 250-core-day certificate cannot finish on a CI runner). The 162 primes below
+# 1000 and the 16843 slices (~6.6 GiB peak) build cold in roughly 1-2 h, giving a public
+# "this library compiles" signal with no download required. Pure build check: no deploy.
+#
+# flt-vandiver-primes path-depends on sibling repos (../flt-vandiver, which needs
+# ../flt-stickelberger and ../flt-cyclotomic-nt), so all four are checked out under a
+# common parent `fam/`. This requires the sibling repos to be READABLE by the default
+# token — i.e. it works once the family is PUBLIC (private siblings would need a PAT).
 
 on:
   push:
@@ -31,20 +34,44 @@ jobs:
           sudo docker image prune --all --force || true
           df -h /
 
-      - name: Checkout
+      # The triggering repo at the pushed commit; siblings at their frozen afm-v1 tag.
+      - name: Checkout flt-vandiver-primes (this repo)
         uses: actions/checkout@v4
+        with:
+          path: fam/flt-vandiver-primes
+      - name: Checkout flt-vandiver
+        uses: actions/checkout@v4
+        with:
+          repository: batchatco/flt-vandiver
+          ref: afm-v1
+          path: fam/flt-vandiver
+      - name: Checkout flt-cyclotomic-nt
+        uses: actions/checkout@v4
+        with:
+          repository: batchatco/flt-cyclotomic-nt
+          ref: afm-v1
+          path: fam/flt-cyclotomic-nt
+      - name: Checkout flt-stickelberger
+        uses: actions/checkout@v4
+        with:
+          repository: batchatco/flt-stickelberger
+          ref: afm-v1
+          path: fam/flt-stickelberger
 
-      - name: Set up Lean + fetch Mathlib cache (skip default build)
+      - name: Install elan + Lean toolchain (no build)
         uses: leanprover/lean-action@f807b338d95de7813c5c50d018f1c23c9b93b4ec # v1.2.0
         with:
+          lake-package-directory: fam/flt-vandiver-primes
           build: false
-          use-mathlib-cache: true
+          use-mathlib-cache: false
           test: false
           lint: false
 
-      - name: Build every per-prime module except 2124679
+      - name: Fetch Mathlib cache + build every per-prime module except 2124679
+        working-directory: fam/flt-vandiver-primes
         run: |
           set -euo pipefail
+          ~/.elan/bin/lake exe cache get
           TARGETS=$(ls FltPrimes/FLT*.lean \
             | sed -e 's#^FltPrimes/#FltPrimes.#' -e 's#\.lean$##' \
             | grep -v 'FLT2124679' \
