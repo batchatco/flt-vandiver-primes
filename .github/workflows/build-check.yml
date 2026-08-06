@@ -1,0 +1,54 @@
+name: Build check (all primes except 2124679)
+
+# Compiles every per-prime module in FltPrimes/ EXCEPT the FLT2124679 slices.
+# The default `lake build` target (the FltPrimes aggregate) imports FLT2124679, whose
+# certificate is a ~8-day / 250-core-day build (time-bound, not memory) and cannot finish
+# on a CI runner. Everything else — the 162 primes below 1000 and the 16843 slices
+# (~6.6 GiB peak, well under the 16 GB runner) — builds cold in roughly an hour, giving a
+# genuine "this per-prime library compiles" signal. Pure build check: no docs, no deploy.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "buildcheck-${{ github.ref }}"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc \
+                      /usr/local/.ghcup /opt/hostedtoolcache/CodeQL \
+                      /usr/local/share/boost "${AGENT_TOOLSDIRECTORY:-}" || true
+          sudo docker image prune --all --force || true
+          df -h /
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Lean + fetch Mathlib cache (skip default build)
+        uses: leanprover/lean-action@f807b338d95de7813c5c50d018f1c23c9b93b4ec # v1.2.0
+        with:
+          build: false
+          use-mathlib-cache: true
+          test: false
+          lint: false
+
+      - name: Build every per-prime module except 2124679
+        run: |
+          set -euo pipefail
+          TARGETS=$(ls FltPrimes/FLT*.lean \
+            | sed -e 's#^FltPrimes/#FltPrimes.#' -e 's#\.lean$##' \
+            | grep -v 'FLT2124679' \
+            | tr '\n' ' ')
+          echo "Building $(echo "$TARGETS" | wc -w) modules (2124679 excluded):"
+          echo "$TARGETS"
+          ~/.elan/bin/lake build $TARGETS
