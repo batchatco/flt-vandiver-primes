@@ -1,5 +1,7 @@
 # flt-vandiver-primes
 
+[![Build check](https://github.com/batchatco/flt-vandiver-primes/actions/workflows/build-check.yml/badge.svg)](https://github.com/batchatco/flt-vandiver-primes/actions/workflows/build-check.yml)
+
 The per-prime Fermat's Last Theorem certificate files for the `flt-vandiver`
 project — `fermatLastTheoremFor_<p>` and its two `native_decide` certificates,
 for every prime `17 ≤ p < 1000` (both regular and irregular), plus both known
