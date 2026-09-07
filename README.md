@@ -15,8 +15,8 @@ interfaces of `flt-vandiver` (`FltVandiver/BadCertificate.lean`, `FltVandiver/Jo
 These are kept separate from the core `flt-vandiver` library because each
 `FltPrimes/FLT<p>.lean` runs a heavy `native_decide` (seconds for small `p`,
 a few minutes for the largest below `1000`; the `FLT16843*` certificate
-re-verifies in seconds and the sixteen-slice `FLT2124679*` chain in about twenty
-core-hours through the machine-speed evaluator `QiEvalFast` of `afm-v2`; in
+re-verifies in 10 s and the sixteen-slice `FLT2124679*` chain in 31 core-hours (118 min
+of wall time, slices concurrent) through the machine-speed evaluator `QiEvalFast` of `afm-v2`; in
 `afm-v1` the same two runs were four slices in twenty single-threaded minutes and
 sixty-four slices in about 250 core-days), so keeping them here lets the core
 library build quickly.
@@ -46,10 +46,10 @@ lake exe cache get      # Mathlib cache
 lake build              # every prime 17 ≤ p < 1000, plus 16843
 ```
 
-`2124679` is **not** in the default build — about twenty core-hours as sixteen parallel
-slices of a few GiB each; opt in with `lake build FltPrimes.FLT2124679`. The rest is light:
-sub-1000 primes are `native_decide` (~6 GiB, seconds-to-minutes), and `16843` is a single
-certificate (seconds). The default runs in parallel, so
+`2124679` is **not** in the default build — 31 core-hours as sixteen parallel slices
+(~7000 s and ~0.6 GiB each; 9.7 GiB for all sixteen); opt in with
+`lake build FltPrimes.FLT2124679`. The rest is light: sub-1000 primes are `native_decide`
+(~6 GiB, seconds-to-minutes), and `16843` is a single certificate (10 s, 1.2 GiB). The default runs in parallel, so
 if it oversubscribes RAM, build individual `FltPrimes.FLT<p>` targets and/or serialize under a cap
 (e.g. `systemd-run --scope -p MemoryMax=… env LEAN_NUM_THREADS=1 lake build`) — your call.
 
