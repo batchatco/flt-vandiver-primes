@@ -6,7 +6,11 @@ The per-prime Fermat's Last Theorem certificate files for the `flt-vandiver`
 project — `fermatLastTheoremFor_<p>` and its two `native_decide` certificates,
 for every prime `17 ≤ p < 1000` (both regular and irregular), plus both known
 Wolstenholme primes, `p = 16843` and `p = 2124679`, via the multi-file
-`FLT16843*` and `FLT2124679*` expansions.
+`FLT16843*` and `FLT2124679*` expansions. `FltPrimes/FLT37Beyond.lean` (`afm-v2`) re-proves
+`p = 37` at auxiliaries beyond the engine's budget `ℓ < p² − p` through the three no-bound
+interfaces of `flt-vandiver` (`FltVandiver/BadCertificate.lean`, `FltVandiver/JointAuxiliary.lean`):
+`ℓ = 1777` with the Bad-set certificate and inside the proved range `2ℓ ≤ 3p² − 5p + 2`, and
+`ℓ = 3923` as a joint Sophie-Germain/Vandiver witness.
 
 These are kept separate from the core `flt-vandiver` library because each
 `FltPrimes/FLT<p>.lean` runs a heavy `native_decide` (seconds for small `p`,
