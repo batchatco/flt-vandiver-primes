@@ -10,19 +10,20 @@ Wolstenholme primes, `p = 16843` and `p = 2124679`, via the multi-file
 
 These are kept separate from the core `flt-vandiver` library because each
 `FltPrimes/FLT<p>.lean` runs a heavy `native_decide` (seconds for small `p`,
-a few minutes for the largest below `1000`; the four-slice `FLT16843*` chain
-re-verifies in about 20 single-threaded minutes, and the 64-slice `FLT2124679*`
-chain in roughly 8 days on a 64-vCPU cloud machine), so keeping them here lets
-the core library build quickly.
+a few minutes for the largest below `1000`; the `FLT16843*` certificate
+re-verifies in seconds and the sixteen-slice `FLT2124679*` chain in about twenty
+core-hours through the machine-speed evaluator `QiEvalFast` of `afm-v2`; in
+`afm-v1` the same two runs were four slices in twenty single-threaded minutes and
+sixty-four slices in about 250 core-days), so keeping them here lets the core
+library build quickly.
 
 Reproducing `2124679` is optional: it exercises no certificate path not already
-checked at `16843` in ~20 minutes — the two Wolstenholme primes share one
-Case I/II route and the same trust base (`2124679` reports 65 scoped
-`native_decide` axioms against `16843`'s 5), so rebuilding it confirms the
-method scales rather than testing anything new. The axiom audit itself
-(`lake env lean AxiomAudit2124679.lean`) is cheap once its oleans exist (after that
-build, or after restoring prebuilt oleans) — it is the multi-day *rebuild*, not the
-audit, that is expensive.
+checked at `16843` in seconds — the two Wolstenholme primes share one
+Case I/II route and the same trust base (`2124679` reports 17 scoped
+`native_decide` axioms, sixteen `Q_i` slices plus the Germain certificate, against
+`16843`'s 2), so rebuilding it confirms the method scales rather than testing
+anything new. The axiom audit itself (`lake env lean AxiomAudit2124679.lean`) is
+cheap once its oleans exist.
 
 A `native_decide`-free counterpart — pure kernel `decide`, no compiler trust —
 re-proves the **8 irregular primes `< 200`** in the sibling repo
@@ -41,9 +42,10 @@ lake exe cache get      # Mathlib cache
 lake build              # every prime 17 ≤ p < 1000, plus 16843
 ```
 
-`2124679` is **not** in the default build — it is a multi-day, 64-core job; opt in with
-`lake build FltPrimes.FLT2124679`. The rest is light: sub-1000 primes are `native_decide`
-(~6 GiB, seconds-to-minutes), the `16843` slices ~4 GiB each (~20 min). The default runs in parallel, so
+`2124679` is **not** in the default build — about twenty core-hours as sixteen parallel
+slices of a few GiB each; opt in with `lake build FltPrimes.FLT2124679`. The rest is light:
+sub-1000 primes are `native_decide` (~6 GiB, seconds-to-minutes), and `16843` is a single
+certificate (seconds). The default runs in parallel, so
 if it oversubscribes RAM, build individual `FltPrimes.FLT<p>` targets and/or serialize under a cap
 (e.g. `systemd-run --scope -p MemoryMax=… env LEAN_NUM_THREADS=1 lake build`) — your call.
 
@@ -53,16 +55,15 @@ Sophie–Germain auxiliary-prime subgroup certificate (`sgCertSub`). Each headli
 axiom base is reprinted in `AxiomAudit.lean` (with `AxiomAudit16843.lean` and
 `AxiomAudit2124679.lean` for the two Wolstenholme primes).
 
-## Errata
+## History
 
-`FltPrimes/FLT2124679.lean`, line 9, has an incorrect comment: it labels
-`ℓ = 135979457 = 64p + 1` as the Vandiver auxiliary prime. That is wrong. As the
-theorem call in the same file shows (`fltPrimeWitnessSGSub 2124679 446182591 2
-135979457 64 …`), the **Vandiver auxiliary prime is `ℓ = 446182591 = 210p + 1`**,
-and `135979457 = 64p + 1` is the **Sophie–Germain auxiliary prime `q`** consumed by
-the Case I subgroup certificate (`sgCertSub`), not the Vandiver `ℓ`. The comment is
-not corrected in place because doing so would invalidate the module's build artifacts
-and force the ~8-day `p = 2124679` recomputation; the proof and every certificate are
+In `afm-v1`, `FltPrimes/FLT2124679.lean` (line 9) labelled `ℓ = 135979457 = 64p + 1` as the
+Vandiver auxiliary prime. As the theorem call in the same file showed
+(`fltPrimeWitnessSGSub 2124679 446182591 2 135979457 64 …`), the **Vandiver auxiliary prime
+is `ℓ = 446182591 = 210p + 1`**, and `135979457 = 64p + 1` is the **Sophie–Germain auxiliary
+prime `q`** consumed by the Case I subgroup certificate (`sgCertSub`). The comment was not
+corrected in `afm-v1` because the recomputation then cost days; it is corrected from `afm-v2`,
+where the `Q_i` certificates run through `QiEvalFast`. The proof and every certificate were
 unaffected, and the paper states the two auxiliaries correctly.
 
 ## Part of the flt-vandiver family
