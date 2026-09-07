@@ -4,15 +4,15 @@ import FltPrimes.Witness
 /-!
 # Fermat's Last Theorem for `p = 2124679` — the second Wolstenholme prime
 
-* **Case II** — the Washington-9.5 small-witness descent, powered by the same
-  `64` fast `Q_i` slices that prove Vandiver (`vandiverCert_all_2124679`,
-  `ℓ = 135979457 = 64p + 1 < p² − p`).
+* **Case II** — the Washington-9.5 small-witness descent, powered by the `Q_i`
+  slices that prove Vandiver (`vandiverCert_all_2124679`, at
+  `ℓ = 446182591 = 210p + 1 < p² − p`, `t = 2`).
 * **Case I** — the Legendre auxiliary prime `q = 135979457` via the
   subgroup-form certificate (the 64 nonzero `p`-th-power residues supplied as
   data and re-verified by `native_decide`).
 
-Three standard axioms + `65` `native_decide` certificates
-(`64` `Q_i` slices + `sgCertSub`); zero named mathematical axioms.
+Three standard axioms + `17` `native_decide` certificates
+(`16` `Q_i` slices + `sgCertSub`); zero named mathematical axioms.
 -/
 
 namespace FltVandiver

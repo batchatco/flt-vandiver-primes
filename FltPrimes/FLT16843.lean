@@ -9,14 +9,14 @@ is *itself* the irregular index, the Kummer Case-I shortcut fails and this
 file is hand-assembled:
 
 * **Case II** — the Washington-9.5 small-witness descent
-  (`Descent95.fermatLastTheoremFor_of_certs_95'`), powered by the same four
-  fast `Q_i` slices that prove Vandiver (`vandiverCert_all_16843`,
-  `ℓ = 370547 < p² − p`).
+  (`Descent95.fermatLastTheoremFor_of_certs_95'`), powered by the `Q_i`
+  certificate that proves Vandiver (`vandiverCert_all_16843`, one
+  `native_decide` call of the machine-speed evaluator, `ℓ = 370547 < p² − p`).
 * **Case I** — the Legendre/Sophie-Germain auxiliary prime `q = 370547`
   (`caseI_of_sgCert`).
 
-Three standard axioms + five `native_decide` certificates (four `Q_i` slices
-+ `sgCert`); zero named mathematical axioms.
+Three standard axioms + two `native_decide` certificates (the `Q_i`
+certificate + `sgCertSub`); zero named mathematical axioms.
 -/
 
 namespace FltVandiver

@@ -1,15 +1,16 @@
 import FltPrimes.FLT2124679Inst
-import FltVandiver.QiCertFast
+import FltVandiver.QiCertFast2
 
-/-! `Q_i` slice 15/64 for `p = 2124679` (`ℓ = 446182591`, `t = 2`): even
-indices `[232400, 249000)` of `evenIndices 2124679`. -/
+/-! `Q_i` slice 15/16 for `p = 2124679` (`ℓ = 446182591`, `t = 2`): even
+indices `[929558, 995955)` of `evenIndices 2124679`, via the machine-speed evaluator
+(`QiEvalFast`) and its bridge `QiCert.Fast2.vandiverCert_of_fast2`. -/
 
 namespace FltVandiver
 
 set_option maxHeartbeats 4000000 in
-theorem vandiverCertFast_2124679_s15 :
-    QiCert.vandiverCertFast 2124679 446182591 2
-      (((QiCert.evenIndices 2124679).drop 232400).take 16600) = true := by
-  native_decide
+theorem vandiverCert_2124679_s15 :
+    QiCert.vandiverCert 2124679 446182591 2
+      (((QiCert.evenIndices 2124679).drop 929558).take 66397) = true :=
+  QiCert.Fast2.vandiverCert_of_fast2 (by native_decide)
 
 end FltVandiver

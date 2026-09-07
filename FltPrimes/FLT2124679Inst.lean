@@ -2,8 +2,8 @@ import Mathlib.Tactic.NormNum.Prime
 import FltVandiver.Prop818Bridge
 
 /-! `p = 2124679` (second Wolstenholme prime): primality / NeZero instances shared
-by the certificate modules. `ℓ = q = 135979457 = 64p + 1` serves as BOTH the `Q_i`
-auxiliary prime and the Legendre/Sophie-Germain auxiliary prime. -/
+by the certificate modules. The `Q_i` auxiliary prime is `ℓ = 446182591 = 210p + 1`
+(with `t = 2`); the Legendre/Sophie-Germain auxiliary prime is `q = 135979457 = 64p + 1`. -/
 
 namespace FltVandiver
 
