@@ -5,6 +5,7 @@ import FltPrimes.FLT23
 import FltPrimes.FLT29
 import FltPrimes.FLT31
 import FltPrimes.FLT37
+import FltPrimes.FLT37Beyond
 import FltPrimes.FLT41
 import FltPrimes.FLT43
 import FltPrimes.FLT47

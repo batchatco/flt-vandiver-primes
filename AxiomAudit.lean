@@ -343,3 +343,6 @@ modules would bloat this file's import set.
 #print axioms fermatLastTheoremThree
 #print axioms fermatLastTheoremFour
 #print axioms FLT_small
+#print axioms FltPrimes.FLT37Beyond.fermatLastTheoremFor_37_bad
+#print axioms FltPrimes.FLT37Beyond.fermatLastTheoremFor_37_size
+#print axioms FltPrimes.FLT37Beyond.fermatLastTheoremFor_37_joint
