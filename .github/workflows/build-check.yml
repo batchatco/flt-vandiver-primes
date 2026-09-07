@@ -40,7 +40,7 @@ jobs:
           sudo docker image prune --all --force || true
           df -h /
 
-      # The triggering repo at the pushed commit; siblings at their frozen afm-v1 tag.
+      # The triggering repo at the pushed commit; siblings at their frozen afm-v2 tag.
       - name: Checkout flt-vandiver-primes (this repo)
         uses: actions/checkout@v4
         with:
@@ -49,19 +49,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: batchatco/flt-vandiver
-          ref: afm-v1
+          ref: afm-v2
           path: fam/flt-vandiver
       - name: Checkout flt-cyclotomic-nt
         uses: actions/checkout@v4
         with:
           repository: batchatco/flt-cyclotomic-nt
-          ref: afm-v1
+          ref: afm-v2
           path: fam/flt-cyclotomic-nt
       - name: Checkout flt-stickelberger
         uses: actions/checkout@v4
         with:
           repository: batchatco/flt-stickelberger
-          ref: afm-v1
+          ref: afm-v2
           path: fam/flt-stickelberger
 
       - name: Install elan + Lean toolchain (no build)
